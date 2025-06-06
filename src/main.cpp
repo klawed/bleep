@@ -25,7 +25,7 @@ void setup() {
   pinMode(LED_PIN, OUTPUT);
   pinMode(BUTTON_PIN, INPUT_PULLUP);
   
-  Serial.println("🚀 ESP32 IoT Template - Interactive Blink Demo");
+  Serial.println("ESP32 IoT Template - Interactive Blink Demo");
   Serial.println("===============================================");
   
   // WiFi setup
@@ -42,88 +42,27 @@ void setup() {
     }
     
     if (WiFi.status() == WL_CONNECTED) {
-      Serial.println("\n✅ WiFi connected!");
+      Serial.println("WiFi connected!");
       Serial.print("IP address: ");
       Serial.println(WiFi.localIP());
     } else {
-      Serial.println("\n❌ WiFi connection failed, continuing without WiFi");
+      Serial.println("WiFi connection failed, continuing without WiFi");
     }
   } else {
-    Serial.println("📡 No WiFi credentials set, running in standalone mode");
+    Serial.println("No WiFi credentials set, running in standalone mode");
   }
   
-  Serial.println("\n🎮 Controls:");
-  Serial.println("   - Press BOOT button to cycle through blink modes");
-  Serial.println("   - Send 's' via Serial to scan for WiFi networks");
-  Serial.println("   - Send 'r' via Serial to restart");
-  Serial.println("\n💡 Blink Modes:");
-  Serial.println("   0: Slow blink (1s)");
-  Serial.println("   1: Fast blink (200ms)");
-  Serial.println("   2: Heartbeat pattern");
-  Serial.println("   3: SOS pattern");
+  Serial.println("Controls:");
+  Serial.println("- Press BOOT button to cycle through blink modes");
+  Serial.println("- Send 's' via Serial to scan for WiFi networks");
+  Serial.println("- Send 'r' via Serial to restart");
+  Serial.println("Blink Modes:");
+  Serial.println("0: Slow blink (1s)");
+  Serial.println("1: Fast blink (200ms)");
+  Serial.println("2: Heartbeat pattern");
+  Serial.println("3: SOS pattern");
   
   digitalWrite(LED_PIN, LOW);
-}
-
-void loop() {
-  unsigned long currentTime = millis();
-  
-  // Handle button press
-  if (digitalRead(BUTTON_PIN) == LOW && !buttonPressed) {
-    if (currentTime - lastButtonPress > 200) {  // Debounce
-      buttonPressed = true;
-      lastButtonPress = currentTime;
-      
-      blinkMode = (blinkMode + 1) % 4;
-      Serial.print("🔄 Switched to blink mode: ");
-      Serial.println(blinkMode);
-      
-      // Reset timing for new mode
-      lastBlink = currentTime;
-      digitalWrite(LED_PIN, LOW);
-      ledState = false;
-    }
-  } else if (digitalRead(BUTTON_PIN) == HIGH) {
-    buttonPressed = false;
-  }
-  
-  // Handle serial commands
-  if (Serial.available()) {
-    char cmd = Serial.read();
-    if (cmd == 's' || cmd == 'S') {
-      scanWiFiNetworks();
-    } else if (cmd == 'r' || cmd == 'R') {
-      Serial.println("🔄 Restarting...");
-      ESP.restart();
-    }
-  }
-  
-  // Handle different blink modes
-  switch (blinkMode) {
-    case 0: // Slow blink
-      if (currentTime - lastBlink >= 1000) {
-        toggleLED();
-        lastBlink = currentTime;
-      }
-      break;
-      
-    case 1: // Fast blink
-      if (currentTime - lastBlink >= 200) {
-        toggleLED();
-        lastBlink = currentTime;
-      }
-      break;
-      
-    case 2: // Heartbeat
-      heartbeatPattern(currentTime);
-      break;
-      
-    case 3: // SOS
-      sosPattern(currentTime);
-      break;
-  }
-  
-  delay(10);
 }
 
 void toggleLED() {
@@ -174,14 +113,14 @@ void sosPattern(unsigned long currentTime) {
 }
 
 void scanWiFiNetworks() {
-  Serial.println("📡 Scanning for WiFi networks...");
+  Serial.println("Scanning for WiFi networks...");
   
   int networks = WiFi.scanNetworks();
   
   if (networks == 0) {
-    Serial.println("❌ No networks found");
+    Serial.println("No networks found");
   } else {
-    Serial.printf("✅ Found %d networks:\n", networks);
+    Serial.printf("Found %d networks:\n", networks);
     for (int i = 0; i < networks; i++) {
       Serial.printf("   %d: %s (%d dBm) %s\n", 
                    i + 1, 
@@ -191,4 +130,65 @@ void scanWiFiNetworks() {
     }
   }
   Serial.println();
+}
+
+void loop() {
+  unsigned long currentTime = millis();
+  
+  // Handle button press
+  if (digitalRead(BUTTON_PIN) == LOW && !buttonPressed) {
+    if (currentTime - lastButtonPress > 200) {  // Debounce
+      buttonPressed = true;
+      lastButtonPress = currentTime;
+      
+      blinkMode = (blinkMode + 1) % 4;
+      Serial.print("🔄 Switched to blink mode: ");
+      Serial.println(blinkMode);
+      
+      // Reset timing for new mode
+      lastBlink = currentTime;
+      digitalWrite(LED_PIN, LOW);
+      ledState = false;
+    }
+  } else if (digitalRead(BUTTON_PIN) == HIGH) {
+    buttonPressed = false;
+  }
+  
+  // Handle serial commands
+  if (Serial.available()) {
+    char cmd = Serial.read();
+    if (cmd == 's' || cmd == 'S') {
+      scanWiFiNetworks();
+    } else if (cmd == 'r' || cmd == 'R') {
+      Serial.println("Restarting...");
+      ESP.restart();
+    }
+  }
+  
+  // Handle different blink modes
+  switch (blinkMode) {
+    case 0: // Slow blink
+      if (currentTime - lastBlink >= 1000) {
+        toggleLED();
+        lastBlink = currentTime;
+      }
+      break;
+      
+    case 1: // Fast blink
+      if (currentTime - lastBlink >= 200) {
+        toggleLED();
+        lastBlink = currentTime;
+      }
+      break;
+      
+    case 2: // Heartbeat
+      heartbeatPattern(currentTime);
+      break;
+      
+    case 3: // SOS
+      sosPattern(currentTime);
+      break;
+  }
+  
+  delay(10);
 }
