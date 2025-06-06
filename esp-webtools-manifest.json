@@ -1,0 +1,25 @@
+{
+  "name": "klawed/bleep",
+  "version": "0.0.1",
+  "funding_url": "https://github.com/klawed/bleep/contributors",
+  "builds": [
+    {
+      "chipFamily": "ESP32",
+      "parts": [
+        {
+          "path": "firmware/klawed_bleep_b1_esp32.bin",
+          "offset": 0
+        }
+      ]
+    },
+    {
+      "chipFamily": "ESP32-S3",
+      "parts": [
+        {
+          "path": "firmware/klawed_bleep_b1_esp32s3.bin",
+          "offset": 0
+        }
+      ]
+    }
+  ]
+}
